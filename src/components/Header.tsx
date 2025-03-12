@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ShoppingBag, Search, User } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
+import CartButton from "./cartButton";
 
 export default function SiteHeader() {
   return (
@@ -53,10 +54,7 @@ export default function SiteHeader() {
             <User className="h-5 w-5" />
             <span className="sr-only">Account</span>
           </Button>
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <ShoppingBag className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
-          </Button>
+          <CartButton />
 
           {/* Mobile Menu Button */}
           <Sidebar />
