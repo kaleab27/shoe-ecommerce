@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header className="sticky top-0 z-50 w-full border-b">
       <div className="container px-4 mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="font-bold text-2xl">
