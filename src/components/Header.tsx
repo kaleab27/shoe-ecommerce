@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Search, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
 import CartButton from "./cartButton";
+import SearchBar from "@/components/search/searchBar";
 
 export default function SiteHeader() {
   return (
@@ -46,10 +47,7 @@ export default function SiteHeader() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-          </Button>
+          <SearchBar />
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <User className="h-5 w-5" />
             <span className="sr-only">Account</span>
