@@ -1,16 +1,16 @@
-import type React from "react"
-import type { Metadata } from "next"
+import type React from "react";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Product Details | NOBLEMAN",
-  description: "Explore our premium handcrafted men's shoes with detailed product information.",
-}
+    title: "Product Details | NOBLEMAN",
+    description:
+        "Explore our premium handcrafted men's shoes with detailed product information.",
+};
 
 export default function ProductLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode
+    children: React.ReactNode;
 }) {
-  return children
+    return children;
 }
-

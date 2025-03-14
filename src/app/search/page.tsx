@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { SearchResults } from "@/components/search/searchResults";
 
 export const metadata: Metadata = {
-  title: "Search | NOBLEMAN",
-  description: "Search for premium men's footwear in our collection.",
+    title: "Search | NOBLEMAN",
+    description: "Search for premium men's footwear in our collection.",
 };
 
 export default function SearchPage({
-  searchParams,
+    searchParams,
 }: {
-  searchParams: { q?: string };
+    searchParams: { q?: string };
 }) {
-  const query = searchParams.q || "";
+    const query = searchParams.q || "";
 
-  return <SearchResults initialQuery={query} />;
+    return <SearchResults initialQuery={query} />;
 }

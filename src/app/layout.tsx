@@ -6,53 +6,53 @@ import Link from "next/link";
 import Header from "@/components/Header";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "NobelMen Shoes",
-  description: "An ecommerce where you can buy luxury men's shoes.",
+    title: "NobelMen Shoes",
+    description: "An ecommerce where you can buy luxury men's shoes.",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          {children}
-          <footer className="border-t py-6 md:py-0">
-            <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:h-16">
-              <p className="text-sm text-muted-foreground">
-                © 2025 NOBLEMAN. All rights reserved.
-              </p>
-              <div className="flex gap-4 text-sm text-muted-foreground">
-                <Link href="#">Terms</Link>
-                <Link href="#">Privacy</Link>
-                <Link href="#">Shipping</Link>
-                <Link href="#">Returns</Link>
-              </div>
-            </div>
-          </footer>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <Header />
+                    {children}
+                    <footer className="border-t py-6 md:py-0">
+                        <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:h-16">
+                            <p className="text-sm text-muted-foreground">
+                                © 2025 NOBLEMAN. All rights reserved.
+                            </p>
+                            <div className="flex gap-4 text-sm text-muted-foreground">
+                                <Link href="#">Terms</Link>
+                                <Link href="#">Privacy</Link>
+                                <Link href="#">Shipping</Link>
+                                <Link href="#">Returns</Link>
+                            </div>
+                        </div>
+                    </footer>
+                </ThemeProvider>
+            </body>
+        </html>
+    );
 }
