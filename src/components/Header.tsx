@@ -2,7 +2,7 @@ import Link from "next/link";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
-import CartButton from "./cartButton";
+import CartButton from "./CartButton";
 import SearchBar from "@/components/search/searchBar";
 
 export default function SiteHeader() {
