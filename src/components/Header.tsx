@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { User } from "lucide-react";
+// import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
 import CartButton from "./CartButton";
 import SearchBar from "@/components/search/searchBar";
+import { AuthButtons } from "./auth/authButton";
 
 export default function SiteHeader() {
     return (
@@ -48,16 +49,16 @@ export default function SiteHeader() {
                 </div>
                 <div className="flex items-center gap-4">
                     <SearchBar />
-                    <Button
+                    {/* <Button
                         variant="ghost"
                         size="icon"
                         className="hidden md:flex"
                     >
                         <User className="h-5 w-5" />
                         <span className="sr-only">Account</span>
-                    </Button>
+                    </Button> */}
+                    <AuthButtons />
                     <CartButton />
-
                     {/* Mobile Menu Button */}
                     <Sidebar />
                 </div>
