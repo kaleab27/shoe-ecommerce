@@ -56,7 +56,7 @@ export const inventoryTable = pgTable("inventory", {
 export const ordersTable = pgTable("orders", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userId: integer().notNull(),
-    phoneNumber: integer().notNull(),
+    phoneNumber: varchar({ length: 20 }).notNull(),
     totalAmount: decimal().notNull(),
     status: varchar({ length: 50 }).default("Pending"), // Order status (Pending, Shipped, Delivered, etc.)
     shippingAddress: varchar({ length: 1024 }).notNull(),
