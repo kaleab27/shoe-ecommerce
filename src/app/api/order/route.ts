@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
     try {
-        const orders = await db.select().from(orderItemsTable);
+        const orders = await db.select().from(ordersTable);
         return new Response(JSON.stringify(orders), { status: 200 });
     } catch (error) {
         console.log(error);
