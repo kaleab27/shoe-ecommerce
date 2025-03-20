@@ -19,7 +19,7 @@ export const productCategoriesTable = pgTable("product_categories", {
 export const productsTable = pgTable("products", {
     id: uuid().primaryKey().defaultRandom(),
     name: varchar({ length: 255 }).notNull(),
-    categoryId: integer()
+    categoryId: uuid()
         .notNull()
         .references(() => productCategoriesTable.id),
     brand: varchar({ length: 100 }),
@@ -38,15 +38,15 @@ export const discountsTable = pgTable("discounts", {
     discountValue: decimal().notNull(),
     startDate: timestamp().notNull().defaultNow(),
     endDate: timestamp().notNull(),
-    categoryId: integer().references(() => productCategoriesTable.id),
-    productId: varchar({ length: 20 }).references(() => productsTable.id),
+    categoryId: uuid().references(() => productCategoriesTable.id),
+    productId: uuid().references(() => productsTable.id),
     active: boolean().default(true),
     createdAt: timestamp().defaultNow(),
 });
 
 export const inventoryTable = pgTable("inventory", {
     id: uuid().primaryKey().defaultRandom(),
-    productId: varchar({ length: 20 })
+    productId: uuid()
         .notNull()
         .references(() => productsTable.id),
     variations: json().notNull(),
@@ -68,10 +68,10 @@ export const ordersTable = pgTable("orders", {
 
 export const orderItemsTable = pgTable("order_items", {
     id: uuid().primaryKey().defaultRandom(),
-    orderId: integer()
+    orderId: uuid()
         .notNull()
         .references(() => ordersTable.id),
-    productId: varchar({ length: 20 })
+    productId: uuid()
         .notNull()
         .references(() => productsTable.id),
     quantity: integer().notNull(),
