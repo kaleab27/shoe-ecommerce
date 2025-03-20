@@ -6,17 +6,18 @@ import {
     json,
     boolean,
     timestamp,
+    uuid,
 } from "drizzle-orm/pg-core";
 
 export const productCategoriesTable = pgTable("product_categories", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuid().primaryKey().defaultRandom(),
     name: varchar({ length: 255 }).notNull(),
     description: varchar({ length: 1024 }),
     createdAt: timestamp().defaultNow(),
 });
 
 export const productsTable = pgTable("products", {
-    id: varchar({ length: 20 }).primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: varchar({ length: 255 }).notNull(),
     categoryId: integer()
         .notNull()
@@ -32,7 +33,7 @@ export const productsTable = pgTable("products", {
 });
 
 export const discountsTable = pgTable("discounts", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuid().primaryKey().defaultRandom(),
     discountType: varchar({ length: 20 }).notNull(), // percentage or fixed
     discountValue: decimal().notNull(),
     startDate: timestamp().notNull().defaultNow(),
@@ -44,7 +45,7 @@ export const discountsTable = pgTable("discounts", {
 });
 
 export const inventoryTable = pgTable("inventory", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuid().primaryKey().defaultRandom(),
     productId: varchar({ length: 20 })
         .notNull()
         .references(() => productsTable.id),
@@ -54,7 +55,7 @@ export const inventoryTable = pgTable("inventory", {
 });
 
 export const ordersTable = pgTable("orders", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuid().primaryKey().defaultRandom(),
     userId: integer().notNull(),
     phoneNumber: varchar({ length: 20 }).notNull(),
     totalAmount: decimal().notNull(),
@@ -66,7 +67,7 @@ export const ordersTable = pgTable("orders", {
 });
 
 export const orderItemsTable = pgTable("order_items", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuid().primaryKey().defaultRandom(),
     orderId: integer()
         .notNull()
         .references(() => ordersTable.id),
