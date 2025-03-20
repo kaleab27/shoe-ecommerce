@@ -74,6 +74,7 @@ export const orderItemsTable = pgTable("order_items", {
         .notNull()
         .references(() => productsTable.id),
     quantity: integer().notNull(),
+    variation: json().notNull(),
     price: decimal().notNull(),
     totalPrice: decimal().notNull(),
     createdAt: timestamp().defaultNow(),
