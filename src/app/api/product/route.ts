@@ -16,16 +16,17 @@ export async function GET(req: Request) {
         });
     }
 }
-
+//
 export async function POST(req: Request) {
     try {
         const reqBody = await req.json();
-        await db.insert(productsTable).values(reqBody);
+        const productData = await db.insert(productsTable).values(reqBody);
+        if (!productData) throw new Error("product can't added");
         return Response.json({
             status: "success",
             data: reqBody,
         });
-    } catch (err: unknown) {
+    } catch (err: any) {
         console.log(err);
         return Response.json({
             status: 400,
