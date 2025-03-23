@@ -1,12 +1,29 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-// import { User } from "lucide-react";
-// import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
 import CartButton from "./CartButton";
 import SearchBar from "@/components/search/searchBar";
 import { AuthButtons } from "./auth/authButton";
 
 export default function SiteHeader() {
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch("/api/user", {
+                    credentials: "include",
+                });
+                const data = await res.json();
+                setIsLoggedIn(true);
+                console.log(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchUser();
+    });
     return (
         <header className="sticky top-0 z-50 w-full border-b">
             <div className="container px-4 mx-auto flex h-16 items-center justify-between">
@@ -57,7 +74,10 @@ export default function SiteHeader() {
                         <User className="h-5 w-5" />
                         <span className="sr-only">Account</span>
                     </Button> */}
-                    <AuthButtons />
+                    <AuthButtons
+                        setLoggedInStatus={setIsLoggedIn}
+                        isLoggedInStatus={isLoggedIn}
+                    />
                     <CartButton />
                     {/* Mobile Menu Button */}
                     <Sidebar />

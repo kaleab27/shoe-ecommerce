@@ -19,8 +19,13 @@ import { LoginDialog } from "@/components/auth/loginDialogue";
 import { SignupDialog } from "@/components/auth/signUpDialogue";
 import { OtpVerificationDialog } from "./otpVerificationDialogue";
 
-export function AuthButtons() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+export function AuthButtons({
+    isLoggedInStatus,
+    setLoggedInStatus,
+}: {
+    isLoggedInStatus: boolean;
+    setLoggedInStatus: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
     const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [showSignupDialog, setShowSignupDialog] = useState(false);
     const [showOtpDialog, setShowOtpDialog] = useState(false);
@@ -47,7 +52,7 @@ export function AuthButtons() {
                 await setActive({ session: signUpAttempt.createdSessionId });
                 console.log("Verification complete");
                 router.push("/");
-                setIsLoggedIn(true);
+                setLoggedInStatus(true);
                 setShowOtpDialog(false);
             } else {
                 // If the status is not complete, check why. User may need to
@@ -77,7 +82,7 @@ export function AuthButtons() {
                     session: signInAttempt?.createdSessionId,
                 });
                 console.log("Successfully LoggedIn");
-                setIsLoggedIn(true);
+                setLoggedInStatus(true);
                 setShowLoginDialog(false);
             } else {
                 // If the status is not complete, check why. User may need to
@@ -122,10 +127,10 @@ export function AuthButtons() {
     };
 
     const handleLogout = () => {
-        setIsLoggedIn(false);
+        setLoggedInStatus(false);
     };
 
-    if (isLoggedIn) {
+    if (isLoggedInStatus) {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

@@ -77,8 +77,6 @@ export function SignupDialog({
         }
     };
 
-    console.log("cookie: ", document.cookie.split("; "));
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
