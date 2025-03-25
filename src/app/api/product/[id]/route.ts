@@ -1,10 +1,9 @@
 import db from "@/db";
 import { eq } from "drizzle-orm";
 import { productsTable } from "@/db/schema";
-import { NextApiRequest } from "next";
 
 export async function GET(
-    req: NextApiRequest,
+    req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     console.log(req);
