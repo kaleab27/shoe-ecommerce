@@ -6,12 +6,12 @@ export const metadata: Metadata = {
     description: "Search for premium men's footwear in our collection.",
 };
 
-export default function SearchPage({
+export default async function SearchPage({
     searchParams,
 }: {
-    searchParams: { q?: string };
+    searchParams: Promise<{ q?: string }> | undefined;
 }) {
-    const query = searchParams.q || "";
+    const query = (await searchParams)?.q || "";
 
     return <SearchResults initialQuery={query} />;
 }
