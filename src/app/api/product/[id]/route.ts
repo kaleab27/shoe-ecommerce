@@ -7,6 +7,7 @@ export async function GET(
     req: NextApiRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    console.log(req);
     const productId = (await params).id;
     try {
         const product = await db
