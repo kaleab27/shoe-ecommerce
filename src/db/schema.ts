@@ -46,11 +46,12 @@ export const discountsTable = pgTable("discounts", {
 
 export const inventoryTable = pgTable("inventory", {
     id: uuid().primaryKey().defaultRandom(),
+    inventoryTag: json(), // array of tags - used to differentiate between different inventories e.g: in different cities
     productId: uuid()
         .notNull()
         .references(() => productsTable.id),
-    variations: json().notNull(),
-    stock: json().notNull(),
+    variationsStock: json().notNull(),
+    totalStock: integer().notNull(),
     createdAt: timestamp().defaultNow(),
 });
 
