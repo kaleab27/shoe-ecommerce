@@ -1,7 +1,7 @@
 import db from "@/db";
 import { productsTable } from "@/db/schema";
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
         const products = await db.select().from(productsTable);
         if (!products) throw new Error("can't find products");
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
             status: "success",
             data: reqBody,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
         console.log(err);
         return Response.json({

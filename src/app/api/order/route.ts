@@ -24,6 +24,7 @@ export async function POST(req: Request) {
                 .values(body.order)
                 .returning({ id: ordersTable.id });
             console.log(order);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const orderItemsWithOrderId = body.orderItems.map((item: any) => ({
                 ...item,
                 orderId: order.id,
