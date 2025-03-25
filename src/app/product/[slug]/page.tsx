@@ -11,7 +11,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+export default function ProductPage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
     console.log(params);
     const [mainImage, setMainImage] = useState(0);
 
