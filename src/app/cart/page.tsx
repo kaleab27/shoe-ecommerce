@@ -92,7 +92,7 @@ export default function CartPage() {
     ];
 
     return (
-        <main className="container mx-auto py-10">
+        <main className="container mx-auto px-4 py-10">
             <div className="mb-6">
                 <Link
                     href="/"
