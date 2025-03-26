@@ -49,7 +49,7 @@ export function SearchFilters({ filters, updateFilters }: FiltersProps) {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 p-8">
             <div>
                 <h2 className="text-lg font-medium mb-4">Filters</h2>
                 <Button
