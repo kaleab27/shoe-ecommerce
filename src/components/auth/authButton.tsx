@@ -18,6 +18,7 @@ import {
 import { LoginDialog } from "@/components/auth/loginDialogue";
 import { SignupDialog } from "@/components/auth/signUpDialogue";
 import { OtpVerificationDialog } from "./otpVerificationDialogue";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AuthButtons({
     isLoggedInStatus,
@@ -37,6 +38,7 @@ export function AuthButtons({
         setActive: signInSetActive,
     } = useSignIn();
     const router = useRouter();
+    const isMobile = useIsMobile();
 
     const handleVerify = async (otp: string) => {
         if (!isLoaded) return;
@@ -130,7 +132,7 @@ export function AuthButtons({
         setLoggedInStatus(false);
     };
 
-    if (isLoggedInStatus) {
+    if (isLoggedInStatus && !isMobile) {
         return (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -161,51 +163,53 @@ export function AuthButtons({
         );
     }
 
-    return (
-        <>
-            <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowLoginDialog(true)}
-                >
-                    Login
-                </Button>
-                <Button
-                    className="bg-amber-800 hover:bg-amber-900 text-white"
-                    size="sm"
-                    onClick={() => setShowSignupDialog(true)}
-                >
-                    Sign Up
-                </Button>
-            </div>
+    if (!isMobile) {
+        return (
+            <>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowLoginDialog(true)}
+                    >
+                        Login
+                    </Button>
+                    <Button
+                        className="bg-amber-800 hover:bg-amber-900 text-white"
+                        size="sm"
+                        onClick={() => setShowSignupDialog(true)}
+                    >
+                        Sign Up
+                    </Button>
+                </div>
 
-            <LoginDialog
-                open={showLoginDialog}
-                onOpenChange={setShowLoginDialog}
-                onLogin={handleLogin}
-                onSignupClick={() => {
-                    setShowLoginDialog(false);
-                    setShowSignupDialog(true);
-                }}
-                serverErrors={errors}
-            />
+                <LoginDialog
+                    open={showLoginDialog}
+                    onOpenChange={setShowLoginDialog}
+                    onLogin={handleLogin}
+                    onSignupClick={() => {
+                        setShowLoginDialog(false);
+                        setShowSignupDialog(true);
+                    }}
+                    serverErrors={errors}
+                />
 
-            <SignupDialog
-                open={showSignupDialog}
-                onOpenChange={setShowSignupDialog}
-                onSignup={handleSignup}
-                onLoginClick={() => {
-                    setShowSignupDialog(false);
-                    setShowLoginDialog(true);
-                }}
-            />
+                <SignupDialog
+                    open={showSignupDialog}
+                    onOpenChange={setShowSignupDialog}
+                    onSignup={handleSignup}
+                    onLoginClick={() => {
+                        setShowSignupDialog(false);
+                        setShowLoginDialog(true);
+                    }}
+                />
 
-            <OtpVerificationDialog
-                open={showOtpDialog}
-                onOpenChange={setShowOtpDialog}
-                onVerify={handleVerify}
-            />
-        </>
-    );
+                <OtpVerificationDialog
+                    open={showOtpDialog}
+                    onOpenChange={setShowOtpDialog}
+                    onVerify={handleVerify}
+                />
+            </>
+        );
+    }
 }

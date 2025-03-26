@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { SearchIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchBarProps {
     variant?: "header" | "page";
@@ -21,6 +22,8 @@ export default function SearchBar({
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const isMobile = useIsMobile();
+    console.log(isMobile);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,20 +44,22 @@ export default function SearchBar({
             <form
                 onSubmit={handleSubmit}
                 className={`relative flex items-center transition-all duration-200 ${
-                    isFocused ? "w-64" : "w-40"
+                    isFocused && !isMobile ? "w-64" : !isMobile ? "w-40" : ""
                 }`}
             >
-                <Input
-                    ref={inputRef}
-                    type="search"
-                    placeholder="Search..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    className="pr-8"
-                />
-                {query && (
+                {!isMobile && (
+                    <Input
+                        ref={inputRef}
+                        type="search"
+                        placeholder="Search..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        className="pr-8"
+                    />
+                )}
+                {!isMobile && query && (
                     <Button
                         type="button"
                         variant="ghost"
