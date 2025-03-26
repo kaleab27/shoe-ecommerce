@@ -16,10 +16,12 @@ export default function SiteHeader() {
                     credentials: "include",
                 });
                 const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
                 setIsLoggedIn(true);
-                console.log(data);
+                console.log("data: ", data);
             } catch (error) {
-                console.log(error);
+                setIsLoggedIn(false);
+                console.log("error: ", error);
             }
         };
         fetchUser();
