@@ -32,6 +32,13 @@ export default function SearchBar({
         }
     };
 
+    const handleClick = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (isMobile) {
+            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        }
+    };
+
     const clearSearch = () => {
         setQuery("");
         if (inputRef.current) {
@@ -75,7 +82,8 @@ export default function SearchBar({
                     type="submit"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 h-full p-0 hover:bg-transparent"
+                    className="absolute right-0 h-full px-1 py-3 hover:bg-transparent"
+                    onClick={handleClick}
                 >
                     <SearchIcon className="h-4 w-4" />
                     <span className="sr-only">Search</span>
