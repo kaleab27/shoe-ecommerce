@@ -83,7 +83,7 @@ export default function ProductPage({
     };
 
     return (
-        <main className="container py-10">
+        <main className="container mx-auto px-4 py-10">
             <div className="mb-6">
                 <Link
                     href="/"
