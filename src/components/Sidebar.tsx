@@ -27,27 +27,27 @@ const navigationItems = [
         icon: Home,
     },
     {
-        title: "New Arrivals",
+        title: "Dress Shoes",
         href: "#",
         icon: ChevronRight,
     },
     {
-        title: "Oxfords",
+        title: "T-Shirts",
         href: "#",
         icon: ChevronRight,
     },
     {
-        title: "Loafers",
+        title: "Casual Shoes",
         href: "#",
         icon: ChevronRight,
     },
     {
-        title: "Boots",
+        title: "Sun Glasses",
         href: "#",
         icon: ChevronRight,
     },
     {
-        title: "Sneakers",
+        title: "Rings & Necklesses",
         href: "#",
         icon: ChevronRight,
     },
@@ -56,17 +56,17 @@ const navigationItems = [
 const accountItems = [
     {
         title: "My Account",
-        href: "#",
+        href: "/account",
         icon: User,
     },
     {
         title: "Search",
-        href: "#",
+        href: "/search",
         icon: Search,
     },
     {
         title: "Shopping Bag",
-        href: "#",
+        href: "/cart",
         icon: ShoppingBag,
     },
 ];
@@ -136,14 +136,14 @@ export function Sidebar() {
                         </div>
                     </div>
 
-                    <div className="border-t p-4">
+                    {/* <div className="border-t p-4">
                         <Button
                             className="w-full bg-amber-800 hover:bg-amber-900 text-white"
                             onClick={() => setOpen(false)}
                         >
                             Shop Collection
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
             </SheetContent>
         </Sheet>

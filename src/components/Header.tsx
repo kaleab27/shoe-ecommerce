@@ -27,7 +27,7 @@ export default function SiteHeader() {
         fetchUser();
     });
     return (
-        <header className="sticky top-0 z-50 w-full border-b">
+        <header className="bg-gray-50 dark:bg-gray-950 sticky top-0 z-50 w-full border-b">
             <div className="container px-4 mx-auto flex h-16 items-center justify-between">
                 <div className="flex items-center gap-6 md:gap-10">
                     <Link href="/" className="font-bold text-2xl">
@@ -38,31 +38,31 @@ export default function SiteHeader() {
                             href="#"
                             className="text-sm font-medium transition-colors hover:text-amber-800"
                         >
-                            New Arrivals
+                            Dress Shoes
                         </Link>
                         <Link
                             href="#"
                             className="text-sm font-medium transition-colors hover:text-amber-800"
                         >
-                            Oxfords
+                            T-Shirts
                         </Link>
                         <Link
                             href="#"
                             className="text-sm font-medium transition-colors hover:text-amber-800"
                         >
-                            Loafers
+                            Casual Shoes
                         </Link>
                         <Link
                             href="#"
                             className="text-sm font-medium transition-colors hover:text-amber-800"
                         >
-                            Boots
+                            Sun Glasses
                         </Link>
                         <Link
                             href="#"
                             className="text-sm font-medium transition-colors hover:text-amber-800"
                         >
-                            Sneakers
+                            Rings & Necklesses
                         </Link>
                     </nav>
                 </div>
