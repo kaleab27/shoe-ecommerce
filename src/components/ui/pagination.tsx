@@ -76,7 +76,7 @@ export function Pagination({
                         variant={currentPage === page ? "default" : "outline"}
                         className={
                             currentPage === page
-                                ? "bg-amber-800 hover:bg-amber-900"
+                                ? "bg-amber-800 hover:bg-amber-900 dark:text-white"
                                 : ""
                         }
                         onClick={() => onPageChange(Number(page))}
