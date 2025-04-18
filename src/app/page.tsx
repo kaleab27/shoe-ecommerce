@@ -1,176 +1,116 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronRight } from "lucide-react";
+import { Pagination } from "@/components/ui/pagination";
+import { mockProducts } from "@/lib/mock-data";
+import { ProductGrid } from "@/components/product/productGrid";
 
 export default function Home() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 8;
+
+    // Calculate pagination values
+    const totalProducts = mockProducts.length;
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = mockProducts.slice(
+        indexOfFirstProduct,
+        indexOfLastProduct
+    );
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        // Scroll to top of product section
+        // document
+        //     .getElementById("product-section")
+        //     ?.scrollIntoView({ behavior: "smooth" });
+    };
+
     return (
         <main className="min-h-screen">
-            {/* Hero Section */}
-            <section className="relative h-[80vh] bg-amber-50">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/placeholder.svg?height=1080&width=1920"
-                        alt="Hero background with men's leather shoes"
-                        fill
-                        className="object-cover"
-                        priority
+            {/* Product Grid Section */}
+            <section
+                id="product-section"
+                className="py-16 px-4 md:px-6 max-w-7xl mx-auto"
+            >
+                <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+                    <h2 className="text-3xl font-bold">Our Collection</h2>
+                    <div className="flex items-center gap-4 mt-4 md:mt-0">
+                        <div className="text-sm text-muted-foreground">
+                            Showing {indexOfFirstProduct + 1}-
+                            {Math.min(indexOfLastProduct, totalProducts)} of{" "}
+                            {totalProducts} products
+                        </div>
+                    </div>
+                </div>
+
+                <ProductGrid products={currentProducts} />
+
+                <div className="mt-12 flex justify-center">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
                     />
-                </div>
-                <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 md:px-6">
-                    <h1 className="text-5xl md:text-7xl font-bold text-white mb-4">
-                        Crafted for the modern man.
-                    </h1>
-                    <p className="text-xl text-white/90 mb-8">
-                        PREMIUM COLLECTION AVAILABLE NOW
-                    </p>
-                    <Button className="bg-amber-800 hover:bg-amber-900 text-white px-8 py-6 text-lg rounded-none">
-                        Shop Collection
-                    </Button>
-                </div>
-            </section>
-
-            {/* Featured Products */}
-            <section className="py-16 px-4 md:px-6 max-w-7xl mx-auto">
-                <h2 className="text-3xl font-bold mb-12 text-center">
-                    Featured Styles
-                </h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {/* Product 1 */}
-                    <div className="group">
-                        <div className="relative aspect-square mb-4 bg-amber-50 overflow-hidden">
-                            <Image
-                                src="/placeholder.svg?height=600&width=600"
-                                alt="Oxford Classic - Brown leather oxford shoes"
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h3 className="font-medium text-lg">
-                                    Oxford Classic
-                                </h3>
-                                <p className="text-muted-foreground">$189</p>
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-full h-8 w-8 p-0 border-amber-800"
-                            >
-                                <ChevronRight className="h-4 w-4 text-amber-800" />
-                                <span className="sr-only">View details</span>
-                            </Button>
-                        </div>
-                    </div>
-
-                    {/* Product 2 */}
-                    <div className="group">
-                        <div className="relative aspect-square mb-4 bg-slate-100 overflow-hidden">
-                            <Image
-                                src="/placeholder.svg?height=600&width=600"
-                                alt="Milano Loafer - Tan suede loafers"
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h3 className="font-medium text-lg">
-                                    Milano Loafer
-                                </h3>
-                                <p className="text-muted-foreground">$165</p>
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-full h-8 w-8 p-0 border-amber-800"
-                            >
-                                <ChevronRight className="h-4 w-4 text-amber-800" />
-                                <span className="sr-only">View details</span>
-                            </Button>
-                        </div>
-                    </div>
-
-                    {/* Product 3 */}
-                    <div className="group">
-                        <div className="relative aspect-square mb-4 bg-amber-100 overflow-hidden">
-                            <Image
-                                src="/placeholder.svg?height=600&width=600"
-                                alt="Urban Boot - Black leather boots"
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </div>
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h3 className="font-medium text-lg">
-                                    Urban Boot
-                                </h3>
-                                <p className="text-muted-foreground">$219</p>
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-full h-8 w-8 p-0 border-amber-800"
-                            >
-                                <ChevronRight className="h-4 w-4 text-amber-800" />
-                                <span className="sr-only">View details</span>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Brand Story */}
-            <section className="py-16 bg-amber-900 text-white">
-                <div className="max-w-7xl mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <h2 className="text-4xl font-bold mb-6">
-                            Craftsmanship in every stitch.
-                        </h2>
-                        <p className="text-lg mb-8">
-                            Our shoes are handcrafted by master artisans using
-                            traditional techniques passed down through
-                            generations. We source the finest leathers and
-                            materials to ensure quality, comfort, and longevity.
-                        </p>
-                        <Button className="bg-white text-amber-900 hover:bg-amber-100 px-8 py-6 text-lg rounded-none">
-                            Our Story
-                        </Button>
-                    </div>
-                    <div className="relative aspect-square md:aspect-[4/5]">
-                        <Image
-                            src="/placeholder.svg?height=800&width=600"
-                            alt="Craftsman working on a leather shoe"
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
                 </div>
             </section>
 
             {/* Collection Grid */}
-            <section className="py-16 px-4 md:px-6 max-w-7xl mx-auto">
+            {/* <section className="py-16 px-4 md:px-6  mx-auto bg-amber-50 dark:bg-amber-950">
                 <h2 className="text-3xl font-bold mb-12 text-center">
                     Explore Collections
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-                        <div
-                            key={item}
+                <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {[
+                        {
+                            name: "Shoes",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                        {
+                            name: "Neckless",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                        {
+                            name: "Rings",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                        {
+                            name: "T-Shirts",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                        {
+                            name: "Dress Shoes",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                        {
+                            name: "Eye Glasses",
+                            image: "/placeholder.svg?height=600&width=450",
+                        },
+                    ].map((collection, index) => (
+                        <Link
+                            href={`/search?category=${collection.name.toLowerCase()}`}
+                            key={index}
                             className="relative aspect-[3/4] bg-amber-50 overflow-hidden group"
                         >
                             <Image
-                                src={`/placeholder.svg?height=600&width=450`}
-                                alt={`Collection image ${item}`}
+                                src={collection.image || "/placeholder.svg"}
+                                alt={`${collection.name} collection`}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                             />
-                        </div>
+                            <div className="absolute inset-0 bg-black/30 flex items-end p-4">
+                                <h3 className="text-white font-medium text-lg">
+                                    {collection.name}
+                                </h3>
+                            </div>
+                        </Link>
                     ))}
                 </div>
-            </section>
+            </section> */}
 
             {/* Newsletter */}
             <section className="py-16 bg-slate-900 text-white">
