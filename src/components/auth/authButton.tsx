@@ -23,9 +23,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export function AuthButtons({
     isLoggedInStatus,
     setLoggedInStatus,
+    isSideBar,
 }: {
     isLoggedInStatus: boolean;
     setLoggedInStatus: React.Dispatch<React.SetStateAction<boolean>>;
+    isSideBar?: boolean;
 }) {
     const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [showSignupDialog, setShowSignupDialog] = useState(false);
@@ -167,6 +169,56 @@ export function AuthButtons({
         return (
             <>
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowLoginDialog(true)}
+                    >
+                        Login
+                    </Button>
+                    <Button
+                        className="bg-amber-800 hover:bg-amber-900 text-white"
+                        size="sm"
+                        onClick={() => setShowSignupDialog(true)}
+                    >
+                        Sign Up
+                    </Button>
+                </div>
+
+                <LoginDialog
+                    open={showLoginDialog}
+                    onOpenChange={setShowLoginDialog}
+                    onLogin={handleLogin}
+                    onSignupClick={() => {
+                        setShowLoginDialog(false);
+                        setShowSignupDialog(true);
+                    }}
+                    serverErrors={errors}
+                />
+
+                <SignupDialog
+                    open={showSignupDialog}
+                    onOpenChange={setShowSignupDialog}
+                    onSignup={handleSignup}
+                    onLoginClick={() => {
+                        setShowSignupDialog(false);
+                        setShowLoginDialog(true);
+                    }}
+                />
+
+                <OtpVerificationDialog
+                    open={showOtpDialog}
+                    onOpenChange={setShowOtpDialog}
+                    onVerify={handleVerify}
+                />
+            </>
+        );
+    }
+
+    if (isSideBar) {
+        return (
+            <>
+                <div className="flex flex-col items-stretch gap-2">
                     <Button
                         variant="ghost"
                         size="sm"

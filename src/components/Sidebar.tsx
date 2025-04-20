@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     Home,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AuthButtons } from "./auth/authButton";
 
 const navigationItems = [
     {
@@ -73,6 +74,24 @@ const accountItems = [
 
 export function Sidebar() {
     const [open, setOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await fetch("/api/user", {
+                    credentials: "include",
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                setIsLoggedIn(true);
+                console.log("data: ", data);
+            } catch (error) {
+                setIsLoggedIn(false);
+                console.log("error: ", error);
+            }
+        };
+        fetchUser();
+    });
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -144,6 +163,13 @@ export function Sidebar() {
                             Shop Collection
                         </Button>
                     </div> */}
+                    <div className="border-t p-4">
+                        <AuthButtons
+                            setLoggedInStatus={setIsLoggedIn}
+                            isLoggedInStatus={isLoggedIn}
+                            isSideBar={true}
+                        />
+                    </div>
                 </div>
             </SheetContent>
         </Sheet>
