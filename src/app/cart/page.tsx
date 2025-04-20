@@ -135,7 +135,7 @@ export default function CartPage() {
 
                         {cartItems.map((item) => (
                             <div key={item.id} className="mb-6">
-                                <div className="grid md:grid-cols-6 gap-4 items-center">
+                                <div className="grid md:grid-cols-6 gap-4 items-center justify-start">
                                     <div className="md:col-span-3">
                                         <div className="flex gap-4">
                                             <div className="relative aspect-square w-20 h-20 flex-shrink-0 bg-amber-50">
@@ -175,16 +175,16 @@ export default function CartPage() {
                                         </div>
                                     </div>
 
-                                    <div className="text-center md:text-center">
+                                    <div className="flex gap-2">
                                         <div className="md:hidden text-sm text-muted-foreground mb-1">
-                                            Price
+                                            Price: 
                                         </div>
                                         ${item.price.toFixed(2)}
                                     </div>
 
                                     <div className="flex items-center md:justify-center">
                                         <div className="md:hidden text-sm text-muted-foreground mr-2">
-                                            Quantity
+                                            Quantity: 
                                         </div>
                                         <div className="flex items-center border rounded-md">
                                             <button
@@ -217,9 +217,9 @@ export default function CartPage() {
                                         </div>
                                     </div>
 
-                                    <div className="text-right">
+                                    <div className="flex gap-2">
                                         <div className="md:hidden text-sm text-muted-foreground mb-1">
-                                            Total
+                                            Total: 
                                         </div>
                                         $
                                         {(item.price * item.quantity).toFixed(
