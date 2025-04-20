@@ -25,7 +25,6 @@ export function ProductGrid({ products }: ProductGridProps) {
             <div>
               <h3 className="font-medium text-lg">{product.name}</h3>
               <p className="text-muted-foreground">${product.price}</p>
-              <p className="text-sm text-muted-foreground">{product.color}</p>
             </div>
             <Button variant="outline" size="sm" className="rounded-full h-8 w-8 p-0 border-amber-800">
               <ChevronRight className="h-4 w-4 text-amber-800" />
