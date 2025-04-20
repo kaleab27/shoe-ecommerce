@@ -129,7 +129,7 @@ export default function ProductPage({
                         </div>
                     </div>
 
-                    <div className="flex gap-4 overflow-auto pb-2">
+                    <div className="flex flex-wrap gap-4 pb-2">
                         {product.images.map((image, index) => (
                             <button
                                 key={index}
