@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Heart, Star, Truck } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -199,7 +199,7 @@ export default function ProductPage({
                                         />
                                         <Label
                                             htmlFor={`color-${color.toLowerCase()}`}
-                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50"
+                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50 dark:peer-data-[state=checked]:text-black"
                                         >
                                             {color}
                                         </Label>
@@ -226,7 +226,7 @@ export default function ProductPage({
                                         />
                                         <Label
                                             htmlFor={`size-${size}`}
-                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50"
+                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50 dark:peer-data-[state=checked]:text-black"
                                         >
                                             {size}
                                         </Label>
@@ -240,13 +240,13 @@ export default function ProductPage({
                         <Button className="bg-amber-800 hover:bg-amber-900 text-white px-8 py-6 text-lg rounded-none">
                             Add to Cart
                         </Button>
-                        <Button
+                        {/* <Button
                             variant="outline"
                             className="border-amber-800 text-amber-800 hover:bg-amber-50 px-8 py-6 text-lg rounded-none"
                         >
                             <Heart className="mr-2 h-5 w-5" />
                             Add to Wishlist
-                        </Button>
+                        </Button> */}
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2">
