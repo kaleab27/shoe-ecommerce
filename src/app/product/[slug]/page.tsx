@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function ProductDetail() {
     const params = useParams();
@@ -26,6 +26,18 @@ export default function ProductDetail() {
     const [selectedVariations, setSelectedVariations] = useState<
         Record<string, string>
     >({});
+
+    // Set default variations when inventory loads
+    useEffect(() => {
+        if (inventory?.variationsStock && product?.variations) {
+            product.variations.forEach((variation) => {
+                const options = getAvailableOptions(variation);
+                if (options.length > 0) {
+                    handleVariationChange(variation, options[0]);
+                }
+            });
+        }
+    }, [inventory?.variationsStock, product?.variations]);
 
     const isLoading = isProductLoading || isInventoryLoading;
 
