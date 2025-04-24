@@ -1,15 +1,19 @@
 export interface Product {
     id: string
     name: string
-    slug: string
-    price: number
-    color: string
-    category: string
-    image: string
+    categoryId: string
+    brand: string
+    basePrice: number
+    discountedPrice: number
+    description: string
+    stockStatus: "In Stock" | "Out of Stock"
+    images: string,
+    variations: string,
+    createdAt: string
   }
   
   // Generate a larger set of mock products for pagination
-  export const mockProducts: Product[] = [
+  export const mockProduct = [
     {
       id: "1",
       name: "Oxford Classic",

@@ -5,30 +5,46 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { mockProducts } from "@/lib/mock-data";
+import { Product } from "@/lib/mock-data";
 import { ProductGrid } from "@/components/product/productGrid";
+import { useProducts } from "@/hooks/useProducts";
 
 export default function Home() {
     const [currentPage, setCurrentPage] = useState(1);
+    const { data: products = [], isLoading, error } = useProducts();
     const productsPerPage = 8;
 
     // Calculate pagination values
-    const totalProducts = mockProducts.length;
+    const totalProducts = products.length;
     const totalPages = Math.ceil(totalProducts / productsPerPage);
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = mockProducts.slice(
+    const currentProducts = products.slice(
         indexOfFirstProduct,
         indexOfLastProduct
     );
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
-        // Scroll to top of product section
-        // document
-        //     .getElementById("product-section")
-        //     ?.scrollIntoView({ behavior: "smooth" });
     };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-red-500">
+                    Error loading products. Please try again later.
+                </div>
+            </div>
+        );
+    }
 
     return (
         <main className="min-h-screen">
