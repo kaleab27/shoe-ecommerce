@@ -1,51 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useProduct } from "@/hooks/useProduct";
+import { useInventory } from "@/hooks/useInventory";
+import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft, ChevronRight, Star, Truck } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import Link from "next/link"
 
-export default function ProductPage({
-    params,
-}: {
-    params: Promise<{ slug: string }>;
-}) {
-    console.log(params);
-    const [mainImage, setMainImage] = useState(0);
+export default function ProductDetail() {
+    const params = useParams();
+    const {
+        data: product,
+        isLoading: isProductLoading,
+        error: productError,
+    } = useProduct(params.slug as string);
+    const {
+        data: inventory,
+        isLoading: isInventoryLoading,
+        // error: inventoryError,
+    } = useInventory(product?.id || "");
+    const [quantity, setQuantity] = useState(1);
+    const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedVariations, setSelectedVariations] = useState<
+        Record<string, string>
+    >({});
 
-    // Mock product data
-    const product = {
-        id: "1",
-        name: "Oxford Classic",
-        slug: "oxford-classic",
-        price: 189,
-        description:
-            "Handcrafted with premium full-grain leather, our Oxford Classic is the epitome of timeless elegance. The sleek silhouette and meticulous stitching make this shoe a versatile addition to any gentleman's wardrobe.",
-        features: [
-            "Full-grain leather upper",
-            "Leather lining for comfort and breathability",
-            "Goodyear welted construction for durability",
-            "Leather sole with rubber heel for grip",
-            "Cushioned insole for all-day comfort",
-        ],
-        care: "Wipe with a damp cloth to remove dirt. Apply leather conditioner and polish regularly. Use shoe trees when not wearing to maintain shape.",
-        images: [
-            "/placeholder.svg?height=800&width=800",
-            "/placeholder.svg?height=800&width=800",
-            "/placeholder.svg?height=800&width=800",
-            "/placeholder.svg?height=800&width=800",
-        ],
-        colors: ["Brown", "Black", "Tan"],
-        sizes: [7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12],
-        rating: 4.8,
-        reviews: 124,
-    };
+    const isLoading = isProductLoading || isInventoryLoading;
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
+
+    if (productError) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-red-500">
+                    Error loading product. Please try again later.
+                </div>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-gray-500">Product not found.</div>
+            </div>
+        );
+    }
 
     // Mock related products
     const relatedProducts = [
@@ -72,221 +80,203 @@ export default function ProductPage({
         },
     ];
 
-    const nextImage = () => {
-        setMainImage((prev) => (prev + 1) % product.images.length);
+    // Get available options for each variation
+    const getAvailableOptions = (variationType: string) => {
+        if (!inventory?.variationsStock) return [];
+        const options = new Set<string>();
+        inventory.variationsStock.forEach((item) => {
+            if (item[variationType]) {
+                options.add(item[variationType] as string);
+            }
+        });
+        return Array.from(options);
     };
 
-    const prevImage = () => {
-        setMainImage(
-            (prev) => (prev - 1 + product.images.length) % product.images.length
-        );
+    // Get current stock based on selected variations
+    const getCurrentStock = () => {
+        if (!inventory?.variationsStock) return 0;
+        const matchingItem = inventory.variationsStock.find((item) => {
+            return product.variations.every(
+                (variation) => item[variation] === selectedVariations[variation]
+            );
+        });
+        return matchingItem?.stock || 0;
     };
+
+    const handleVariationChange = (variationType: string, value: string) => {
+        setSelectedVariations((prev) => ({
+            ...prev,
+            [variationType]: value,
+        }));
+    };
+
+    const currentStock = getCurrentStock();
 
     return (
-        <main className="container mx-auto px-4 py-10">
-            <div className="mb-6">
-                <Link
-                    href="/"
-                    className="text-sm text-amber-800 hover:underline flex items-center"
-                >
-                    <ChevronLeft className="h-4 w-4 mr-1" />
-                    Back to collection
-                </Link>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-10 mb-16">
+        <main className="min-h-screen py-16 px-4 md:px-6">
+            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
                 {/* Product Images */}
                 <div className="space-y-4">
-                    <div className="relative aspect-square bg-amber-50 overflow-hidden">
+                    <div className="relative aspect-square">
                         <Image
                             src={
-                                product.images[mainImage] || "/placeholder.svg"
+                                product.images[selectedImage] ||
+                                "/placeholder.svg"
                             }
                             alt={product.name}
                             fill
                             className="object-cover"
-                            priority
                         />
-                        <div className="absolute inset-0 flex items-center justify-between px-4">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="rounded-full bg-white/80 hover:bg-white"
-                                onClick={prevImage}
-                            >
-                                <ChevronLeft className="h-5 w-5" />
-                                <span className="sr-only">Previous image</span>
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="rounded-full bg-white/80 hover:bg-white"
-                                onClick={nextImage}
-                            >
-                                <ChevronRight className="h-5 w-5" />
-                                <span className="sr-only">Next image</span>
-                            </Button>
+                    </div>
+                    {product.images.length > 1 && (
+                        <div className="flex gap-2 overflow-x-auto pb-2">
+                            {product.images.map((image, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSelectedImage(index)}
+                                    className={`relative aspect-square w-20 flex-shrink-0 overflow-hidden border-2 ${
+                                        index === selectedImage
+                                            ? "border-amber-800"
+                                            : "border-transparent"
+                                    }`}
+                                >
+                                    <Image
+                                        src={image || "/placeholder.svg"}
+                                        alt={`${product.name} thumbnail ${index + 1}`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </button>
+                            ))}
                         </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-4 pb-2">
-                        {product.images.map((image, index) => (
-                            <button
-                                key={index}
-                                className={`relative aspect-square w-20 flex-shrink-0 overflow-hidden border-2 ${
-                                    index === mainImage
-                                        ? "border-amber-800"
-                                        : "border-transparent"
-                                }`}
-                                onClick={() => setMainImage(index)}
-                            >
-                                <Image
-                                    src={image || "/placeholder.svg"}
-                                    alt={`${product.name} thumbnail ${index + 1}`}
-                                    fill
-                                    className="object-cover"
-                                />
-                            </button>
-                        ))}
-                    </div>
+                    )}
                 </div>
 
                 {/* Product Details */}
-                <div className="space-y-6">
+                <div className="flex flex-col gap-6">
                     <div>
-                        <h1 className="text-3xl font-bold">{product.name}</h1>
-                        <div className="flex items-center gap-2 mt-2">
-                            <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        className={`h-4 w-4 ${
-                                            i < Math.floor(product.rating)
-                                                ? "fill-amber-400 text-amber-400"
-                                                : "fill-gray-200 text-gray-200"
-                                        }`}
-                                    />
-                                ))}
-                            </div>
-                            <span className="text-sm text-muted-foreground">
-                                {product.rating} ({product.reviews} reviews)
-                            </span>
+                        <h1 className="text-4xl font-bold mb-2">
+                            {product.name}
+                        </h1>
+                        <div className="flex items-center gap-4">
+                            <p className="text-2xl font-semibold text-amber-800">
+                                ${product.discountedPrice}
+                            </p>
+                            {product.discountedPrice < product.basePrice && (
+                                <p className="text-lg text-gray-500 line-through">
+                                    ${product.basePrice}
+                                </p>
+                            )}
                         </div>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            {currentStock > 0 ? "In Stock" : "Out of Stock"}
+                        </p>
                     </div>
-
-                    <div className="text-2xl font-bold">${product.price}</div>
-
-                    <p className="text-muted-foreground">
-                        {product.description}
-                    </p>
 
                     <div className="space-y-4">
                         <div>
-                            <h3 className="font-medium mb-2">Color</h3>
-                            <RadioGroup
-                                defaultValue={product.colors[0]}
-                                className="flex gap-2"
-                            >
-                                {product.colors.map((color) => (
-                                    <div
-                                        key={color}
-                                        className="flex items-center"
-                                    >
-                                        <RadioGroupItem
-                                            value={color}
-                                            id={`color-${color.toLowerCase()}`}
-                                            className="peer sr-only"
-                                        />
-                                        <Label
-                                            htmlFor={`color-${color.toLowerCase()}`}
-                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50 dark:peer-data-[state=checked]:text-black"
-                                        >
-                                            {color}
-                                        </Label>
-                                    </div>
-                                ))}
-                            </RadioGroup>
+                            <h2 className="text-lg font-semibold mb-2">
+                                Description
+                            </h2>
+                            <p className="text-gray-600">
+                                {product.description}
+                            </p>
                         </div>
 
                         <div>
-                            <h3 className="font-medium mb-2">Size</h3>
-                            <RadioGroup
-                                defaultValue={String(product.sizes[4])}
-                                className="flex flex-wrap gap-2"
-                            >
-                                {product.sizes.map((size) => (
-                                    <div
-                                        key={size}
-                                        className="flex items-center"
-                                    >
-                                        <RadioGroupItem
-                                            value={String(size)}
-                                            id={`size-${size}`}
-                                            className="peer sr-only"
-                                        />
-                                        <Label
-                                            htmlFor={`size-${size}`}
-                                            className="rounded-md border border-muted px-3 py-2 hover:border-amber-800 peer-data-[state=checked]:border-amber-800 peer-data-[state=checked]:bg-amber-50 dark:peer-data-[state=checked]:text-black"
-                                        >
-                                            {size}
-                                        </Label>
+                            <h2 className="text-lg font-semibold mb-2">
+                                Brand
+                            </h2>
+                            <p className="text-gray-600">{product.brand}</p>
+                        </div>
+
+                        {product.variations.length > 0 && (
+                            <div className="space-y-4">
+                                {product.variations.map((variation) => (
+                                    <div key={variation}>
+                                        <h2 className="text-lg font-semibold mb-2 capitalize">
+                                            {variation}
+                                        </h2>
+                                        <div className="flex flex-wrap gap-2">
+                                            {getAvailableOptions(variation).map(
+                                                (option) => (
+                                                    <button
+                                                        key={option}
+                                                        onClick={() =>
+                                                            handleVariationChange(
+                                                                variation,
+                                                                option
+                                                            )
+                                                        }
+                                                        className={`px-3 py-1 rounded-full text-sm border ${
+                                                            selectedVariations[
+                                                                variation
+                                                            ] === option
+                                                                ? "bg-amber-800 text-white border-amber-800"
+                                                                : "bg-white text-gray-800 border-gray-300 hover:border-amber-800"
+                                                        }`}
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                )
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
-                            </RadioGroup>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center border rounded-md">
+                            <Button
+                                variant="ghost"
+                                onClick={() =>
+                                    setQuantity(Math.max(1, quantity - 1))
+                                }
+                                className="px-3"
+                                disabled={currentStock === 0}
+                            >
+                                -
+                            </Button>
+                            <Input
+                                type="number"
+                                value={quantity}
+                                onChange={(e) =>
+                                    setQuantity(
+                                        Math.max(
+                                            1,
+                                            parseInt(e.target.value) || 1
+                                        )
+                                    )
+                                }
+                                className="w-16 text-center border-0"
+                                min="1"
+                                max={currentStock}
+                                disabled={currentStock === 0}
+                            />
+                            <Button
+                                variant="ghost"
+                                onClick={() =>
+                                    setQuantity(
+                                        Math.min(currentStock, quantity + 1)
+                                    )
+                                }
+                                className="px-3"
+                                disabled={currentStock === 0}
+                            >
+                                +
+                            </Button>
                         </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                        <Button className="bg-amber-800 hover:bg-amber-900 text-white px-8 py-6 text-lg rounded-none">
-                            Add to Cart
-                        </Button>
-                        {/* <Button
-                            variant="outline"
-                            className="border-amber-800 text-amber-800 hover:bg-amber-50 px-8 py-6 text-lg rounded-none"
+                        <Button
+                            className="flex-1 bg-amber-800 hover:bg-amber-700 text-white"
+                            disabled={currentStock === 0}
                         >
-                            <Heart className="mr-2 h-5 w-5" />
-                            Add to Wishlist
-                        </Button> */}
+                            {currentStock === 0
+                                ? "Out of Stock"
+                                : "Add to Cart"}
+                        </Button>
                     </div>
-
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2">
-                        <Truck className="h-4 w-4" />
-                        <span>Free shipping on orders over $200</span>
-                    </div>
-
-                    <Separator className="my-6" />
-
-                    <Tabs defaultValue="details">
-                        <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="details">Details</TabsTrigger>
-                            <TabsTrigger value="features">Features</TabsTrigger>
-                            <TabsTrigger value="care">Care</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="details" className="pt-4">
-                            <p className="text-muted-foreground">
-                                {product.description}
-                            </p>
-                            <p className="text-muted-foreground mt-4">
-                                The Oxford Classic is a timeless dress shoe that
-                                has been a staple in men&apos;s fashion for
-                                centuries. Our version combines traditional
-                                craftsmanship with modern comfort features to
-                                create a shoe that looks as good as it feels.
-                            </p>
-                        </TabsContent>
-                        <TabsContent value="features" className="pt-4">
-                            <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
-                                {product.features.map((feature, index) => (
-                                    <li key={index}>{feature}</li>
-                                ))}
-                            </ul>
-                        </TabsContent>
-                        <TabsContent value="care" className="pt-4">
-                            <p className="text-muted-foreground">
-                                {product.care}
-                            </p>
-                        </TabsContent>
-                    </Tabs>
                 </div>
             </div>
 
