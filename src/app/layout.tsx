@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -41,22 +42,25 @@ export default function RootLayout({
                         disableTransitionOnChange
                     >
                         <Providers>
-                            <Header />
-                            {children}
-                            <footer className="border-t py-6 md:py-0">
-                                <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:h-16">
-                                    <p className="text-sm text-muted-foreground">
-                                        © 2025 NOBLEMAN. All rights reserved.
-                                    </p>
-                                    <div className="flex gap-4 text-sm text-muted-foreground">
-                                        <Link href="#">Terms</Link>
-                                        <Link href="#">Privacy</Link>
-                                        <Link href="#">Shipping</Link>
-                                        <Link href="#">Returns</Link>
+                            <Suspense>
+                                <Header />
+                                {children}
+                                <footer className="border-t py-6 md:py-0">
+                                    <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:h-16">
+                                        <p className="text-sm text-muted-foreground">
+                                            © 2025 NOBLEMAN. All rights
+                                            reserved.
+                                        </p>
+                                        <div className="flex gap-4 text-sm text-muted-foreground">
+                                            <Link href="#">Terms</Link>
+                                            <Link href="#">Privacy</Link>
+                                            <Link href="#">Shipping</Link>
+                                            <Link href="#">Returns</Link>
+                                        </div>
                                     </div>
-                                </div>
-                            </footer>
-                            <Toaster />
+                                </footer>
+                                <Toaster />
+                            </Suspense>
                         </Providers>
                     </ThemeProvider>
                 </body>

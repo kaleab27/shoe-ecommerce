@@ -4,14 +4,15 @@ import { ordersTable } from "@/db/schema";
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const id = (await params).id;
     try {
         // Fetch the order details
         const order = await db
             .select()
             .from(ordersTable)
-            .where(eq(ordersTable.id, params.id))
+            .where(eq(ordersTable.id, id))
             .limit(1);
 
         if (!order.length) {

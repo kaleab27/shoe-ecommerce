@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { Product } from "@/lib/mock-data";
 import { ProductGrid } from "@/components/product/productGrid";
 import { useProducts } from "@/hooks/useProducts";
 

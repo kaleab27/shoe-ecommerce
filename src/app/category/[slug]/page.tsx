@@ -94,7 +94,7 @@ export default function CategoryPage() {
                             No products found
                         </h3>
                         <p className="text-muted-foreground mb-6 max-w-md">
-                            We couldn't find any products in this category at
+                            We couldn&apos;t find any products in this category at
                             the moment. Please check back later or explore our
                             other categories.
                         </p>

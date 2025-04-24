@@ -30,6 +30,8 @@ export default function ProductDetail() {
     >({});
     const { addToCart, removeItem, isInCart } = useCart();
 
+    const isLoading = isProductLoading || isInventoryLoading;
+
     // Set default variations when inventory loads
     useEffect(() => {
         if (inventory?.variationsStock && product?.variations) {
@@ -41,8 +43,6 @@ export default function ProductDetail() {
             });
         }
     }, [inventory?.variationsStock, product?.variations]);
-
-    const isLoading = isProductLoading || isInventoryLoading;
 
     if (isLoading) {
         return (
