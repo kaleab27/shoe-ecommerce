@@ -25,3 +25,29 @@ export interface Product {
     variations: string[];
     createdAt: string;
 }
+
+export interface OrderItem {
+    id: string;
+    orderId: string;
+    productId: string;
+    quantity: number;
+    variation: Record<string, string>;
+    price: string;
+    totalPrice: string;
+    createdAt: string;
+    status?: string;
+    paymentStatus?: string;
+    phoneNumber?: string;
+    shippingAddress?: string;
+}
+
+export interface Order {
+    id?: string;
+    userId: string;
+    phoneNumber: string;
+    shippingAddress: string;
+    totalAmount: number;
+    status: string;
+    paymentStatus: string;
+    createdAt?: string;
+}

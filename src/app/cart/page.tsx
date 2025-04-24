@@ -7,7 +7,6 @@ import { ChevronLeft, Minus, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
     Select,
@@ -56,7 +55,6 @@ const recentlyViewed = [
 
 export default function CartPage() {
     const { cartItems, updateQuantity, removeItem, isInitialized } = useCart();
-    const [promoCode, setPromoCode] = useState("");
     const [shippingMethod, setShippingMethod] = useState("standard");
 
     const subtotal = cartItems.reduce(
@@ -282,38 +280,23 @@ export default function CartPage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="standard">
-                                                Standard Shipping (Free)
+                                                Two Day Shipping (Free)
                                             </SelectItem>
                                             <SelectItem value="express">
-                                                Express Shipping ($15.00)
+                                                One Day Shipping ($15.00)
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="promo">Promo Code</Label>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            id="promo"
-                                            value={promoCode}
-                                            onChange={(e) =>
-                                                setPromoCode(e.target.value)
-                                            }
-                                            placeholder="Enter promo code"
-                                        />
-                                        <Button
-                                            variant="outline"
-                                            className="shrink-0"
-                                        >
-                                            Apply
-                                        </Button>
-                                    </div>
-                                </div>
                             </div>
 
-                            <Button className="w-full bg-amber-800 hover:bg-amber-900 text-white py-6 text-lg rounded-none">
-                                Proceed to Checkout
+                            <Button
+                                asChild
+                                className="w-full bg-amber-800 hover:bg-amber-900 text-white py-6 text-lg rounded-none"
+                            >
+                                <Link href="/checkout">
+                                    Proceed to Checkout
+                                </Link>
                             </Button>
                         </div>
                     </div>

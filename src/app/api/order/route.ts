@@ -18,6 +18,7 @@ export async function POST(req: Request) {
 
         // console.log(orderItemsWithOrderId);
         // await db.insert(orderItemsTable).values(orderItemsWithOrderId);
+        let ret = {};
         await db.transaction(async (tx) => {
             const [order] = await tx
                 .insert(ordersTable)
@@ -31,8 +32,12 @@ export async function POST(req: Request) {
             }));
             console.log(orderItemsWithOrderId);
             await tx.insert(orderItemsTable).values(orderItemsWithOrderId);
+            ret = {
+                order: body.order,
+                orderItems: orderItemsWithOrderId,
+            };
         });
-        return new Response(JSON.stringify(body), { status: 200 });
+        return new Response(JSON.stringify(ret), { status: 200 });
     } catch (error) {
         console.log(error);
         return new Response("Error creating order", { status: 500 });
