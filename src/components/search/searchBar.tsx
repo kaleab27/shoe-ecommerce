@@ -1,9 +1,8 @@
 "use client";
 
 import type React from "react";
-
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,20 +21,49 @@ export default function SearchBar({
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const searchParams = useSearchParams();
     const isMobile = useIsMobile();
-    console.log(isMobile);
+
+    useEffect(() => {
+        const searchQuery = searchParams.get("q");
+        if (searchQuery) {
+            setQuery(searchQuery);
+        }
+    }, [searchParams]);
+
+    // Update URL as user types
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (query.trim()) {
+                router.push(`/search?q=${encodeURIComponent(query.trim())}`, {
+                    scroll: false,
+                });
+            } else {
+                // Remove the query parameter when the input is empty
+                router.push("/search", { scroll: false });
+            }
+        }, 300); // Debounce for 300ms
+
+        return () => clearTimeout(timeoutId);
+    }, [query, router]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim()) {
             router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        } else {
+            router.push("/search");
         }
     };
 
     const handleClick = (e: React.FormEvent) => {
         e.preventDefault();
         if (isMobile) {
-            router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+            if (query.trim()) {
+                router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+            } else {
+                router.push("/search");
+            }
         }
     };
 
@@ -44,6 +72,7 @@ export default function SearchBar({
         if (inputRef.current) {
             inputRef.current.focus();
         }
+        router.push("/search");
     };
 
     if (variant === "header") {

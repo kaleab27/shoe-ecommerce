@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -12,34 +11,23 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { categories } from "@/lib/categories";
 
 interface FiltersProps {
     filters: {
         categories: string[];
-        colors: string[];
         priceRange: { min: number; max: number };
     };
     updateFilters: (filters: Partial<FiltersProps["filters"]>) => void;
 }
 
 export function SearchFilters({ filters, updateFilters }: FiltersProps) {
-    const categories = ["Oxfords", "Loafers", "Boots", "Sneakers"];
-    const colors = ["Black", "Brown", "Tan", "White"];
-
-    const toggleCategory = (category: string) => {
-        const newCategories = filters.categories.includes(category)
-            ? filters.categories.filter((c) => c !== category)
-            : [...filters.categories, category];
+    const toggleCategory = (categoryId: string) => {
+        const newCategories = filters.categories.includes(categoryId)
+            ? filters.categories.filter((c) => c !== categoryId)
+            : [...filters.categories, categoryId];
 
         updateFilters({ categories: newCategories });
-    };
-
-    const toggleColor = (color: string) => {
-        const newColors = filters.colors.includes(color)
-            ? filters.colors.filter((c) => c !== color)
-            : [...filters.colors, color];
-
-        updateFilters({ colors: newColors });
     };
 
     const handlePriceChange = (value: number[]) => {
@@ -58,8 +46,7 @@ export function SearchFilters({ filters, updateFilters }: FiltersProps) {
                     onClick={() =>
                         updateFilters({
                             categories: [],
-                            colors: [],
-                            priceRange: { min: 0, max: 300 },
+                            priceRange: { min: 0, max: 1000 },
                         })
                     }
                 >
@@ -69,61 +56,30 @@ export function SearchFilters({ filters, updateFilters }: FiltersProps) {
 
             <Separator />
 
-            <Accordion
-                type="multiple"
-                defaultValue={["categories", "colors", "price"]}
-            >
+            <Accordion type="multiple" defaultValue={["categories", "price"]}>
                 <AccordionItem value="categories">
                     <AccordionTrigger>Categories</AccordionTrigger>
                     <AccordionContent>
                         <div className="space-y-2">
                             {categories.map((category) => (
                                 <div
-                                    key={category}
+                                    key={category.id}
                                     className="flex items-center space-x-2"
                                 >
                                     <Checkbox
-                                        id={`category-${category}`}
+                                        id={`category-${category.id}`}
                                         checked={filters.categories.includes(
-                                            category
+                                            category.id
                                         )}
                                         onCheckedChange={() =>
-                                            toggleCategory(category)
+                                            toggleCategory(category.id)
                                         }
                                     />
                                     <Label
-                                        htmlFor={`category-${category}`}
+                                        htmlFor={`category-${category.id}`}
                                         className="text-sm font-normal cursor-pointer"
                                     >
-                                        {category}
-                                    </Label>
-                                </div>
-                            ))}
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="colors">
-                    <AccordionTrigger>Colors</AccordionTrigger>
-                    <AccordionContent>
-                        <div className="space-y-2">
-                            {colors.map((color) => (
-                                <div
-                                    key={color}
-                                    className="flex items-center space-x-2"
-                                >
-                                    <Checkbox
-                                        id={`color-${color}`}
-                                        checked={filters.colors.includes(color)}
-                                        onCheckedChange={() =>
-                                            toggleColor(color)
-                                        }
-                                    />
-                                    <Label
-                                        htmlFor={`color-${color}`}
-                                        className="text-sm font-normal cursor-pointer"
-                                    >
-                                        {color}
+                                        {category.name}
                                     </Label>
                                 </div>
                             ))}
@@ -140,7 +96,7 @@ export function SearchFilters({ filters, updateFilters }: FiltersProps) {
                                     filters.priceRange.min,
                                     filters.priceRange.max,
                                 ]}
-                                max={300}
+                                max={1000}
                                 step={10}
                                 onValueChange={handlePriceChange}
                                 className="mt-6"

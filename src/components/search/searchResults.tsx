@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import SearchBar from "@/components/search/searchBar";
 import { SearchFilters } from "@/components/search/searchFilters";
 import { Button } from "@/components/ui/button";
@@ -15,117 +16,43 @@ import {
 } from "@/components/ui/select";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-// Mock product data
-const allProducts = [
-    {
-        id: "1",
-        name: "Oxford Classic",
-        slug: "oxford-classic",
-        price: 189,
-        color: "Brown",
-        category: "Oxfords",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "2",
-        name: "Milano Loafer",
-        slug: "milano-loafer",
-        price: 165,
-        color: "Tan",
-        category: "Loafers",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "3",
-        name: "Urban Boot",
-        slug: "urban-boot",
-        price: 219,
-        color: "Black",
-        category: "Boots",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "4",
-        name: "Classic Derby",
-        slug: "classic-derby",
-        price: 179,
-        color: "Black",
-        category: "Oxfords",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "5",
-        name: "Casual Sneaker",
-        slug: "casual-sneaker",
-        price: 149,
-        color: "White",
-        category: "Sneakers",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "6",
-        name: "Penny Loafer",
-        slug: "penny-loafer",
-        price: 175,
-        color: "Brown",
-        category: "Loafers",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "7",
-        name: "Chelsea Boot",
-        slug: "chelsea-boot",
-        price: 229,
-        color: "Brown",
-        category: "Boots",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-    {
-        id: "8",
-        name: "Wingtip Oxford",
-        slug: "wingtip-oxford",
-        price: 199,
-        color: "Tan",
-        category: "Oxfords",
-        image: "/placeholder.svg?height=600&width=600",
-    },
-];
+import { useProducts } from "@/hooks/useProducts";
+import { Product } from "@/lib/types";
 
 interface SearchResultsProps {
     initialQuery: string;
 }
 
 export function SearchResults({ initialQuery }: SearchResultsProps) {
+    const searchParams = useSearchParams();
     const [query, setQuery] = useState(initialQuery);
     const [sortOption, setSortOption] = useState("relevance");
     const [filters, setFilters] = useState({
         categories: [] as string[],
-        colors: [] as string[],
-        priceRange: { min: 0, max: 300 },
+        priceRange: { min: 0, max: 1000 },
     });
 
-    const [filteredProducts, setFilteredProducts] = useState(allProducts);
+    const { data: products, isLoading, error } = useProducts();
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+
+    // Update query when URL parameters change
+    useEffect(() => {
+        const searchQuery = searchParams.get("q");
+        setQuery(searchQuery || "");
+    }, [searchParams]);
 
     useEffect(() => {
-        const url = new URL(window.location.href);
-        if (query) {
-            url.searchParams.set("q", query);
-        } else {
-            url.searchParams.delete("q");
-        }
-        window.history.replaceState({}, "", url.toString());
-    }, [query]);
+        if (!products) return;
 
-    useEffect(() => {
-        let results = [...allProducts];
+        let results = [...products];
 
-        // Filter by search query
-        if (query) {
-            const searchTerms = query.toLowerCase().split(" ");
+        // Only apply search filter if there's a query
+        const searchQuery = searchParams.get("q");
+        if (searchQuery) {
+            const searchTerms = searchQuery.toLowerCase().split(" ");
             results = results.filter((product) => {
                 const productText =
-                    `${product.name} ${product.category} ${product.color}`.toLowerCase();
+                    `${product.name} ${product.brand}`.toLowerCase();
                 return searchTerms.every((term) => productText.includes(term));
             });
         }
@@ -133,46 +60,62 @@ export function SearchResults({ initialQuery }: SearchResultsProps) {
         // Apply category filters
         if (filters.categories.length > 0) {
             results = results.filter((product) =>
-                filters.categories.includes(product.category)
-            );
-        }
-
-        // Apply color filters
-        if (filters.colors.length > 0) {
-            results = results.filter((product) =>
-                filters.colors.includes(product.color)
+                filters.categories.includes(product.categoryId)
             );
         }
 
         // Apply price range filter
         results = results.filter(
             (product) =>
-                product.price >= filters.priceRange.min &&
-                product.price <= filters.priceRange.max
+                product.basePrice >= filters.priceRange.min &&
+                product.basePrice <= filters.priceRange.max
         );
 
         // Sort results
         switch (sortOption) {
             case "price-low":
-                results.sort((a, b) => a.price - b.price);
+                results.sort((a, b) => a.basePrice - b.basePrice);
                 break;
             case "price-high":
-                results.sort((a, b) => b.price - a.price);
+                results.sort((a, b) => b.basePrice - a.basePrice);
                 break;
             case "name":
                 results.sort((a, b) => a.name.localeCompare(b.name));
                 break;
-            // For relevance, we keep the original order or could implement a more complex relevance algorithm
             default:
                 break;
         }
 
         setFilteredProducts(results);
-    }, [query, filters, sortOption]);
+    }, [searchParams, filters, sortOption, products]);
 
     const updateFilters = (newFilters: Partial<typeof filters>) => {
         setFilters((prev) => ({ ...prev, ...newFilters }));
     };
+
+    if (isLoading) {
+        return (
+            <div className="container px-4 mx-auto py-8">
+                <div className="text-center py-16">
+                    <p>Loading products...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="container px-4 mx-auto py-8">
+                <div className="text-center py-16">
+                    <p className="text-red-500">
+                        Error loading products. Please try again later.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    const searchQuery = searchParams.get("q");
 
     return (
         <div className="container px-4 mx-auto py-8">
@@ -181,9 +124,10 @@ export function SearchResults({ initialQuery }: SearchResultsProps) {
                 <SearchBar variant="page" initialQuery={query} />
             </div>
 
-            {query && (
+            {searchQuery && (
                 <p className="text-muted-foreground mb-6">
-                    {filteredProducts.length} results for &quot;{query}&quot;
+                    {filteredProducts.length} results for &quot;{searchQuery}
+                    &quot;
                 </p>
             )}
 
@@ -257,8 +201,7 @@ export function SearchResults({ initialQuery }: SearchResultsProps) {
                                     setQuery("");
                                     setFilters({
                                         categories: [],
-                                        colors: [],
-                                        priceRange: { min: 0, max: 300 },
+                                        priceRange: { min: 0, max: 1000 },
                                     });
                                 }}
                             >
@@ -270,13 +213,13 @@ export function SearchResults({ initialQuery }: SearchResultsProps) {
                             {filteredProducts.map((product) => (
                                 <Link
                                     key={product.id}
-                                    href={`/product/${product.slug}`}
+                                    href={`/product/${product.id}`}
                                     className="group"
                                 >
                                     <div className="relative aspect-square mb-4 bg-amber-50 overflow-hidden">
                                         <Image
                                             src={
-                                                product.image ||
+                                                product.images[0] ||
                                                 "/placeholder.svg"
                                             }
                                             alt={product.name}
@@ -290,10 +233,10 @@ export function SearchResults({ initialQuery }: SearchResultsProps) {
                                                 {product.name}
                                             </h3>
                                             <p className="text-muted-foreground">
-                                                ${product.price}
+                                                ${product.basePrice}
                                             </p>
                                             <p className="text-sm text-muted-foreground">
-                                                {product.color}
+                                                {product.brand}
                                             </p>
                                         </div>
                                         <Button
