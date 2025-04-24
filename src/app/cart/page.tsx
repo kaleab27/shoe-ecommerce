@@ -16,80 +16,64 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useCart, CartItem } from "@/hooks/useCart";
 
-// Mock cart data
-const initialCartItems = [
+// Helper function to safely get price
+const getPrice = (item: CartItem) => {
+    const price = item.product.discountedPrice || item.product.basePrice;
+    return parseFloat(`${price}`);
+};
+
+// Helper function to format price
+const formatPrice = (price: number) => {
+    return `$${price.toFixed(2)}`;
+};
+
+// Mock recently viewed data
+const recentlyViewed = [
     {
-        id: "1",
-        name: "Oxford Classic",
-        slug: "oxford-classic",
-        price: 189,
-        color: "Brown",
-        size: 9,
-        quantity: 1,
+        id: "3",
+        name: "Urban Boot",
+        slug: "urban-boot",
+        price: 219,
         image: "/placeholder.svg?height=600&width=600",
     },
     {
-        id: "2",
-        name: "Milano Loafer",
-        slug: "milano-loafer",
-        price: 165,
-        color: "Tan",
-        size: 10,
-        quantity: 1,
+        id: "4",
+        name: "Classic Derby",
+        slug: "classic-derby",
+        price: 179,
+        image: "/placeholder.svg?height=600&width=600",
+    },
+    {
+        id: "5",
+        name: "Casual Sneaker",
+        slug: "casual-sneaker",
+        price: 149,
         image: "/placeholder.svg?height=600&width=600",
     },
 ];
 
 export default function CartPage() {
-    const [cartItems, setCartItems] = useState(initialCartItems);
+    const { cartItems, updateQuantity, removeItem, isInitialized } = useCart();
     const [promoCode, setPromoCode] = useState("");
     const [shippingMethod, setShippingMethod] = useState("standard");
 
     const subtotal = cartItems.reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) => total + getPrice(item) * item.quantity,
         0
     );
     const shipping = shippingMethod === "express" ? 15 : 0;
     const tax = subtotal * 0.15; // 15% tax rate
     const total = subtotal + shipping + tax;
 
-    const updateQuantity = (id: string, newQuantity: number) => {
-        if (newQuantity < 1) return;
-        setCartItems(
-            cartItems.map((item) =>
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            )
+    if (!isInitialized) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+            </div>
         );
-    };
-
-    const removeItem = (id: string) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
-    };
-
-    const recentlyViewed = [
-        {
-            id: "3",
-            name: "Urban Boot",
-            slug: "urban-boot",
-            price: 219,
-            image: "/placeholder.svg?height=600&width=600",
-        },
-        {
-            id: "4",
-            name: "Classic Derby",
-            slug: "classic-derby",
-            price: 179,
-            image: "/placeholder.svg?height=600&width=600",
-        },
-        {
-            id: "5",
-            name: "Casual Sneaker",
-            slug: "casual-sneaker",
-            price: 149,
-            image: "/placeholder.svg?height=600&width=600",
-        },
-    ];
+    }
 
     return (
         <main className="container mx-auto px-4 py-10">
@@ -126,71 +110,73 @@ export default function CartPage() {
                     <div className="lg:col-span-2">
                         <div className="hidden md:grid grid-cols-6 gap-4 mb-4 text-sm font-medium text-muted-foreground">
                             <div className="col-span-3">Product</div>
-                            <div className="text-center">Price</div>
-                            <div className="text-center">Quantity</div>
+                            <div className="text-left">Price</div>
+                            <div className="text-left">Quantity</div>
                             <div className="text-right">Total</div>
                         </div>
 
                         <Separator className="mb-6" />
 
                         {cartItems.map((item) => (
-                            <div key={item.id} className="mb-6">
+                            <div
+                                key={`${item.product.id}-${Object.values(item.selectedVariations).join("-")}`}
+                                className="mb-6"
+                            >
                                 <div className="grid md:grid-cols-6 gap-4 items-center justify-start">
                                     <div className="md:col-span-3">
                                         <div className="flex gap-4">
                                             <div className="relative aspect-square w-20 h-20 flex-shrink-0 bg-amber-50">
                                                 <Image
                                                     src={
-                                                        item.image ||
+                                                        item.product
+                                                            .images[0] ||
                                                         "/placeholder.svg"
                                                     }
-                                                    alt={item.name}
+                                                    alt={item.product.name}
                                                     fill
                                                     className="object-cover"
                                                 />
                                             </div>
                                             <div>
                                                 <Link
-                                                    href={`/product/${item.slug}`}
+                                                    href={`/product/${item.product.id}`}
                                                     className="font-medium hover:text-amber-800"
                                                 >
-                                                    {item.name}
+                                                    {item.product.name}
                                                 </Link>
                                                 <div className="text-sm text-muted-foreground mt-1">
-                                                    <div>
-                                                        Color: {item.color}
-                                                    </div>
-                                                    <div>Size: {item.size}</div>
+                                                    {Object.entries(
+                                                        item.selectedVariations
+                                                    ).map(([key, value]) => (
+                                                        <div
+                                                            key={key}
+                                                            className="capitalize"
+                                                        >
+                                                            {key}: {value}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                                <button
-                                                    onClick={() =>
-                                                        removeItem(item.id)
-                                                    }
-                                                    className="text-sm text-red-600 hover:text-red-800 flex items-center mt-2 md:hidden"
-                                                >
-                                                    <Trash2 className="h-4 w-4 mr-1" />
-                                                    Remove
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="flex gap-2">
                                         <div className="md:hidden text-sm text-muted-foreground mb-1">
-                                            Price: 
+                                            Price:
                                         </div>
-                                        ${item.price.toFixed(2)}
+                                        {formatPrice(getPrice(item))}
                                     </div>
 
-                                    <div className="flex items-center md:justify-center">
+                                    <div className="flex items-center md:justify-left">
                                         <div className="md:hidden text-sm text-muted-foreground mr-2">
-                                            Quantity: 
+                                            Quantity:
                                         </div>
-                                        <div className="flex items-center border rounded-md">
+                                        <div className="flex items-left border rounded-md">
                                             <button
                                                 onClick={() =>
                                                     updateQuantity(
-                                                        item.id,
+                                                        item.product.id,
+                                                        item.selectedVariations,
                                                         item.quantity - 1
                                                     )
                                                 }
@@ -205,7 +191,8 @@ export default function CartPage() {
                                             <button
                                                 onClick={() =>
                                                     updateQuantity(
-                                                        item.id,
+                                                        item.product.id,
+                                                        item.selectedVariations,
                                                         item.quantity + 1
                                                     )
                                                 }
@@ -217,17 +204,23 @@ export default function CartPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-2">
-                                        <div className="md:hidden text-sm text-muted-foreground mb-1">
-                                            Total: 
+                                    <div className="flex flex-col md:items-end gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="md:hidden text-sm text-muted-foreground">
+                                                Total:
+                                            </div>
+                                            {formatPrice(
+                                                getPrice(item) * item.quantity
+                                            )}
                                         </div>
-                                        $
-                                        {(item.price * item.quantity).toFixed(
-                                            2
-                                        )}
                                         <button
-                                            onClick={() => removeItem(item.id)}
-                                            className="text-sm text-red-600 hover:text-red-800 hidden md:flex items-center justify-end mt-2"
+                                            onClick={() =>
+                                                removeItem(
+                                                    item.product.id,
+                                                    item.selectedVariations
+                                                )
+                                            }
+                                            className="text-sm text-red-600 hover:text-red-800 flex items-center md:justify-end mt-2"
                                         >
                                             <Trash2 className="h-4 w-4 mr-1" />
                                             Remove
@@ -250,7 +243,7 @@ export default function CartPage() {
                                     <span className="text-muted-foreground">
                                         Subtotal
                                     </span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span>{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">
@@ -259,19 +252,19 @@ export default function CartPage() {
                                     <span>
                                         {shipping === 0
                                             ? "Free"
-                                            : `$${shipping.toFixed(2)}`}
+                                            : formatPrice(shipping)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">
                                         Tax
                                     </span>
-                                    <span>${tax.toFixed(2)}</span>
+                                    <span>{formatPrice(tax)}</span>
                                 </div>
                                 <Separator className="my-3" />
                                 <div className="flex justify-between font-bold">
                                     <span>Total</span>
-                                    <span>${total.toFixed(2)}</span>
+                                    <span>{formatPrice(total)}</span>
                                 </div>
                             </div>
 

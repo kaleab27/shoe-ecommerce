@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/useCart";
 
 export default function CartButton() {
-    const [itemCount, setItemCount] = useState(0);
-
-    // load the data from global state
-    useEffect(() => {
-        setItemCount(2);
-    }, []);
+    const { cartItems } = useCart();
+    const itemCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
     return (
         <Button variant="ghost" size="icon" asChild className="relative">

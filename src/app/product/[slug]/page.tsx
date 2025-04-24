@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "sonner";
 
 export default function ProductDetail() {
     const params = useParams();
@@ -26,6 +28,7 @@ export default function ProductDetail() {
     const [selectedVariations, setSelectedVariations] = useState<
         Record<string, string>
     >({});
+    const { addToCart, removeItem, isInCart } = useCart();
 
     // Set default variations when inventory loads
     useEffect(() => {
@@ -122,7 +125,39 @@ export default function ProductDetail() {
         }));
     };
 
+    const handleAddToCart = () => {
+        if (!product) return;
+
+        // Check if all variations are selected
+        const allVariationsSelected = product.variations.every(
+            (variation) => selectedVariations[variation]
+        );
+
+        if (!allVariationsSelected) {
+            toast.error("Please select all variations");
+            return;
+        }
+
+        // Check if there's enough stock
+        const currentStock = getCurrentStock();
+        if (currentStock < quantity) {
+            toast.error("Not enough stock available");
+            return;
+        }
+
+        // Add to cart
+        addToCart(product, selectedVariations, quantity);
+        toast.success("Added to cart");
+    };
+
+    const handleRemoveFromCart = () => {
+        if (!product) return;
+        removeItem(product.id, selectedVariations);
+        toast.success("Removed from cart");
+    };
+
     const currentStock = getCurrentStock();
+    const isProductInCart = isInCart(product.id, selectedVariations);
 
     return (
         <main className="min-h-screen py-16 px-4 md:px-6">
@@ -172,13 +207,14 @@ export default function ProductDetail() {
                         </h1>
                         <div className="flex items-center gap-4">
                             <p className="text-2xl font-semibold text-amber-800">
-                                ${product.discountedPrice}
+                                ${product.discountedPrice || product.basePrice}
                             </p>
-                            {product.discountedPrice < product.basePrice && (
-                                <p className="text-lg text-gray-500 line-through">
-                                    ${product.basePrice}
-                                </p>
-                            )}
+                            {product.discountedPrice &&
+                                product.discountedPrice < product.basePrice && (
+                                    <p className="text-lg text-gray-500 line-through">
+                                        ${product.basePrice}
+                                    </p>
+                                )}
                         </div>
                         <p className="text-sm text-muted-foreground mt-2">
                             {currentStock > 0 ? "In Stock" : "Out of Stock"}
@@ -281,19 +317,30 @@ export default function ProductDetail() {
                             </Button>
                         </div>
                         <Button
-                            className="flex-1 bg-amber-800 hover:bg-amber-700 text-white"
+                            className={`flex-1 ${
+                                isProductInCart
+                                    ? "bg-red-600 hover:bg-red-700"
+                                    : "bg-amber-800 hover:bg-amber-700"
+                            } text-white`}
                             disabled={currentStock === 0}
+                            onClick={
+                                isProductInCart
+                                    ? handleRemoveFromCart
+                                    : handleAddToCart
+                            }
                         >
                             {currentStock === 0
                                 ? "Out of Stock"
-                                : "Add to Cart"}
+                                : isProductInCart
+                                  ? "Remove from Cart"
+                                  : "Add to Cart"}
                         </Button>
                     </div>
                 </div>
             </div>
 
             {/* Related Products */}
-            <section className="mt-16">
+            <section className="max-w-7xl mx-auto mt-16">
                 <h2 className="text-2xl font-bold mb-8">You may also like</h2>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {relatedProducts.map((product) => (
