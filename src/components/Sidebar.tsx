@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AuthButtons } from "./auth/authButton";
+import { categories } from "@/lib/categories";
 
 const navigationItems = [
     {
@@ -27,31 +28,11 @@ const navigationItems = [
         href: "/",
         icon: Home,
     },
-    {
-        title: "Dress Shoes",
-        href: "#",
+    ...categories.map((category) => ({
+        title: category.name,
+        href: `/category/${category.slug}`,
         icon: ChevronRight,
-    },
-    {
-        title: "T-Shirts",
-        href: "#",
-        icon: ChevronRight,
-    },
-    {
-        title: "Casual Shoes",
-        href: "#",
-        icon: ChevronRight,
-    },
-    {
-        title: "Sun Glasses",
-        href: "#",
-        icon: ChevronRight,
-    },
-    {
-        title: "Rings & Necklesses",
-        href: "#",
-        icon: ChevronRight,
-    },
+    })),
 ];
 
 const accountItems = [
@@ -74,7 +55,7 @@ const accountItems = [
 
 export function Sidebar() {
     const [open, setOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -98,7 +79,7 @@ export function Sidebar() {
             <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
                     <Menu className="h-5 w-5" />
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only">Toggle menu</span>
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0">
@@ -155,14 +136,6 @@ export function Sidebar() {
                         </div>
                     </div>
 
-                    {/* <div className="border-t p-4">
-                        <Button
-                            className="w-full bg-amber-800 hover:bg-amber-900 text-white"
-                            onClick={() => setOpen(false)}
-                        >
-                            Shop Collection
-                        </Button>
-                    </div> */}
                     <div className="border-t p-4">
                         <AuthButtons
                             setLoggedInStatus={setIsLoggedIn}

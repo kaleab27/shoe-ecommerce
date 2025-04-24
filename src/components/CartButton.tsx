@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 
 export default function CartButton() {
-    const { cartItems } = useCart();
+    const { cartItems, isInitialized } = useCart();
+
+    if (!isInitialized) return null;
+
     const itemCount = cartItems.reduce(
         (total, item) => total + item.quantity,
         0

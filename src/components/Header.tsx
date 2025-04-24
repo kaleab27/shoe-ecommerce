@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import CartButton from "./CartButton";
 import SearchBar from "@/components/search/searchBar";
 import { AuthButtons } from "./auth/authButton";
+import { categories } from "@/lib/categories";
 
 export default function SiteHeader() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -34,36 +35,15 @@ export default function SiteHeader() {
                         NOBLEMAN
                     </Link>
                     <nav className="hidden md:flex gap-6">
-                        <Link
-                            href="#"
-                            className="text-sm font-medium transition-colors hover:text-amber-800"
-                        >
-                            Dress Shoes
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm font-medium transition-colors hover:text-amber-800"
-                        >
-                            T-Shirts
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm font-medium transition-colors hover:text-amber-800"
-                        >
-                            Casual Shoes
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm font-medium transition-colors hover:text-amber-800"
-                        >
-                            Sun Glasses
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm font-medium transition-colors hover:text-amber-800"
-                        >
-                            Rings & Necklesses
-                        </Link>
+                        {categories.map((category) => (
+                            <Link
+                                key={category.id}
+                                href={`/category/${category.slug}`}
+                                className="text-sm font-medium transition-colors hover:text-amber-800"
+                            >
+                                {category.name}
+                            </Link>
+                        ))}
                     </nav>
                 </div>
                 <div className="flex items-center gap-4">
