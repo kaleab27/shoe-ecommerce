@@ -40,12 +40,14 @@ export default function SearchBar({
                 });
             } else {
                 // Remove the query parameter when the input is empty
-                router.push("/search", { scroll: false });
+                if(variant !== "header") {
+                    router.push("/search", { scroll: false });
+                }
             }
         }, 300); // Debounce for 300ms
 
         return () => clearTimeout(timeoutId);
-    }, [query, router]);
+    }, [query, router, variant]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,7 +74,9 @@ export default function SearchBar({
         if (inputRef.current) {
             inputRef.current.focus();
         }
-        router.push("/search");
+        if (variant !== "header") {
+            router.push("/search");
+        }
     };
 
     if (variant === "header") {

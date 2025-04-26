@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -42,7 +41,6 @@ export default function RootLayout({
                         disableTransitionOnChange
                     >
                         <Providers>
-                            <Suspense>
                                 <Header />
                                 {children}
                                 <footer className="border-t py-6 md:py-0">
@@ -60,7 +58,6 @@ export default function RootLayout({
                                     </div>
                                 </footer>
                                 <Toaster />
-                            </Suspense>
                         </Providers>
                     </ThemeProvider>
                 </body>
