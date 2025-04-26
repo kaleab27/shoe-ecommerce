@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { User } from "lucide-react";
-import { useSignUp, useSignIn } from "@clerk/nextjs";
+import { useSignUp, useSignIn, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { ClerkAPIError } from "@clerk/types";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
@@ -19,15 +19,18 @@ import { LoginDialog } from "@/components/auth/loginDialogue";
 import { SignupDialog } from "@/components/auth/signUpDialogue";
 import { OtpVerificationDialog } from "./otpVerificationDialogue";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 export function AuthButtons({
     isLoggedInStatus,
     setLoggedInStatus,
     isSideBar,
+    redirectURL,
 }: {
     isLoggedInStatus: boolean;
     setLoggedInStatus: React.Dispatch<React.SetStateAction<boolean>>;
     isSideBar?: boolean;
+    redirectURL: string;
 }) {
     const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [showSignupDialog, setShowSignupDialog] = useState(false);
@@ -39,6 +42,7 @@ export function AuthButtons({
         signIn,
         setActive: signInSetActive,
     } = useSignIn();
+    const { signOut } = useClerk();
     const router = useRouter();
     const isMobile = useIsMobile();
 
@@ -131,7 +135,12 @@ export function AuthButtons({
     };
 
     const handleLogout = () => {
-        setLoggedInStatus(false);
+        try {
+            signOut({ redirectUrl: redirectURL });
+            setLoggedInStatus(false);
+        } catch {
+            toast.error("SignOut Error");
+        }
     };
 
     if (isLoggedInStatus && !isMobile) {

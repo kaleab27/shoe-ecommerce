@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { AuthButtons } from "@/components/auth/authButton";
 
 export default function CheckoutPage() {
     const router = useRouter();
@@ -20,6 +21,7 @@ export default function CheckoutPage() {
         phoneNumber: "",
         shippingAddress: "",
     });
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
     if (!isInitialized || isUserLoading) {
         return (
@@ -39,12 +41,13 @@ export default function CheckoutPage() {
                     <p className="text-muted-foreground mb-8">
                         You need to be logged in to place an order.
                     </p>
-                    <Button
-                        asChild
-                        className="bg-amber-800 hover:bg-amber-900 text-white px-8 py-6 text-lg rounded-none"
-                    >
-                        <a href="/login">Log In</a>
-                    </Button>
+                    <div className="flex justify-center">
+                        <AuthButtons
+                            isLoggedInStatus={isLoggedIn}
+                            setLoggedInStatus={setIsLoggedIn}
+                            redirectURL="/checkout"
+                        />
+                    </div>
                 </div>
             </div>
         );
@@ -94,7 +97,9 @@ export default function CheckoutPage() {
                     toast.success("Order placed successfully!");
 
                     // Redirect to order confirmation page
-                    router.push(`/order-confirmation/${data.orderItems[0].orderId}`);
+                    router.push(
+                        `/order-confirmation/${data.orderItems[0].orderId}`
+                    );
                 },
                 onError: (error) => {
                     console.error("Error creating order:", error);

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import CartButton from "./CartButton";
 import SearchBar from "@/components/search/searchBar";
@@ -10,6 +11,7 @@ import { categories } from "@/lib/categories";
 
 export default function SiteHeader() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const pathname = usePathname();
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -59,6 +61,7 @@ export default function SiteHeader() {
                     <AuthButtons
                         setLoggedInStatus={setIsLoggedIn}
                         isLoggedInStatus={isLoggedIn}
+                        redirectURL={pathname}
                     />
                     <CartButton />
                     {/* Mobile Menu Button */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
     Home,
     ShoppingBag,
@@ -56,6 +57,7 @@ const accountItems = [
 export function Sidebar() {
     const [open, setOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const pathname = usePathname();
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -141,6 +143,7 @@ export function Sidebar() {
                             setLoggedInStatus={setIsLoggedIn}
                             isLoggedInStatus={isLoggedIn}
                             isSideBar={true}
+                            redirectURL={pathname}
                         />
                     </div>
                 </div>
